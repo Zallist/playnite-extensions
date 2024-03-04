@@ -1,0 +1,7 @@
+﻿Id: IGDBMetadataPlugin_e0a0c910-c966-495c-98d0-bc1ad7b1a83f
+Name: Custom Metadata Provider
+Author: John Doe
+Version: 1.0
+Module: IGDBMetadataPlugin.dll
+Type: MetadataProvider
+Icon: icon.png

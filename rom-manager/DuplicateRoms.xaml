@@ -1,0 +1,147 @@
+﻿<UserControl x:Class="RomManager.DuplicateRoms"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RomManager"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="MidnightBlue">
+
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="DataGridCollectionViewSource" Source="{Binding AllDuplicateRoms}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="GroupName" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+        <Style TargetType="{x:Type Button}" x:Key="ButtonOpensContextMenu" BasedOn="{x:Null}">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Click">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="ContextMenu.IsOpen">
+                                    <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                </BooleanAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,4">
+            <Separator DockPanel.Dock="Bottom" />
+            <Button DockPanel.Dock="Right" Padding="4,0" Command="{Binding RecalculateGroupsCommand}">Apply</Button>
+            <StackPanel Orientation="Vertical">
+                <DockPanel Margin="4,0">
+                    <Label DockPanel.Dock="Left" VerticalAlignment="Center">Similarity Threshold:</Label>
+                    <TextBox DockPanel.Dock="Right" Text="{Binding SimilarityThreshold, StringFormat={}{0:P2}}" Width="80" VerticalAlignment="Center" IsReadOnly="True" />
+                    <Slider Value="{Binding SimilarityThreshold}" Margin="4,0" VerticalAlignment="Center" Minimum="0.5" Maximum="1.0" SmallChange="0.01" LargeChange="0.05" />
+                </DockPanel>
+                <DockPanel Margin="4,0">
+                    <Label DockPanel.Dock="Left">Comparison Type</Label>
+                    <ComboBox ItemsSource="{Binding ComparisonCategoryTypes}" SelectedValue="{Binding ComparisonCategory}"
+                        DisplayMemberPath="Item2" SelectedValuePath="Item1" />
+                </DockPanel>
+            </StackPanel>
+        </DockPanel>
+
+        <Grid DockPanel.Dock="Bottom" Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Delete all selected roms" Command="{Binding DoDeleteCommand}" />
+            <Button Grid.Column="1" Content="Cancel all changes" Command="{Binding DoCancelCommand}" />
+        </Grid>
+
+        <DataGrid ItemsSource="{Binding Source={StaticResource DataGridCollectionViewSource}}"
+                  d:ItemsSource="{d:SampleData ItemCount=20}"
+                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserResizeRows="False" CanUserSortColumns="False"
+                  SelectionMode="Single" SelectionUnit="FullRow"
+                  AreRowDetailsFrozen="True" IsReadOnly="True"
+                  GridLinesVisibility="None" HeadersVisibility="Column"
+                  EnableRowVirtualization="True" 
+                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                  ScrollViewer.CanContentScroll="True">
+            <DataGrid.Resources>
+                <Style x:Key="Cell_Base">
+                    <Setter Property="FrameworkElement.VerticalAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="Cell_TextBlock" BasedOn="{StaticResource Cell_Base}">
+                    <Setter Property="FrameworkElement.ToolTip" Value="{Binding RelativeSource={RelativeSource Self},Path=Text}"/>
+                    <Setter Property="FrameworkElement.Margin" Value="4,0,4,0" />
+                </Style>
+                <Style x:Key="Cell_CheckBox" BasedOn="{StaticResource Cell_Base}">
+                    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="True" 
+                                                  Background="{DynamicResource ExpanderBackgroundBrush}" 
+                                                  Foreground="{DynamicResource TextBrush}" 
+                                                  BorderThickness="0">
+                                            <Expander.Header>
+                                                <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0"/>
+                                            </Expander.Header>
+                                            <Expander.Content>
+                                                <ItemsPresenter />
+                                            </Expander.Content>
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn CanUserResize="False" Header="Keep" Binding="{Binding ExclusivelyKeep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource Cell_CheckBox}" />
+                <DataGridCheckBoxColumn CanUserResize="False" Header="Delete" Binding="{Binding Delete, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource Cell_CheckBox}" />
+                <DataGridTextColumn Header="Game" Binding="{Binding GameName}" ElementStyle="{StaticResource Cell_TextBlock}" />
+                <DataGridTextColumn Header="Path" Binding="{Binding RelativeRomPath}" ElementStyle="{StaticResource Cell_TextBlock}" />
+                <DataGridTextColumn Header="Similarity" Binding="{Binding SimilarityPercentage}" ElementStyle="{StaticResource Cell_TextBlock}" />
+                <DataGridTextColumn Header="Platforms" Binding="{Binding Platforms}" ElementStyle="{StaticResource Cell_TextBlock}" />
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{x:Null}">
+                    <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                    <Setter Property="Background" Value="{DynamicResource NormalBrushDark}" />
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu ItemsSource="{Binding MenuOptions}" Placement="Bottom" Style="{StaticResource {x:Type ContextMenu}}">
+                                <ContextMenu.ItemContainerStyle>
+                                    <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                                        <Setter Property="Header" Value="{Binding Path=Item1}" />
+                                        <Setter Property="Command" Value="{Binding Path=Item2}" />
+                                    </Style>
+                                </ContextMenu.ItemContainerStyle>
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Delete}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource WarningBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell" BasedOn="{x:Null}">
+                    <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}" />
+                    <Setter Property="BorderThickness" Value="0.5" />
+                </Style>
+            </DataGrid.CellStyle>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

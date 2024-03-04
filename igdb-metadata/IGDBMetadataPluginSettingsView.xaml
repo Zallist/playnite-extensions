@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="IGDBMetadataPlugin.IGDBMetadataPluginSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="600">
+    <StackPanel>
+        <TextBlock Margin="0,10" TextWrapping="Wrap">
+            <Run>You can get IGDB Client ID &amp; secrets by following the documentation at</Run>
+            <Hyperlink NavigateUri="https://api-docs.igdb.com/#authentication">https://api-docs.igdb.com/#authentication</Hyperlink>
+        </TextBlock>
+        
+        <TextBlock Text="IGDB Client ID: "/>
+        <TextBox Text="{Binding Settings.ClientId}"/>
+        
+        <TextBlock Text="IGDB Client Secret: "/>
+        <TextBox Text="{Binding Settings.ClientSecret}"/>
+    </StackPanel>
+</UserControl>

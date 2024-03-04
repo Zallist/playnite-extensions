@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="CopyToFasterDrive.CopyToFasterDriveSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="600">
+	<StackPanel Margin="8">
+		<CheckBox IsChecked="{Binding Settings.Enabled}" VerticalContentAlignment="Center" Margin="0,0,0,8">
+			<Label FontWeight="Bold">Enabled</Label>
+		</CheckBox>
+
+		<Label Content="Faster Directory Path"/>
+		<TextBox Name="FasterDirectoryPath" Text="{Binding Settings.FasterDirectoryPath, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+		
+		<Label Content="Max Directory Size In Bytes"/>
+		<TextBox Name="FasterDirectoryMaxSizeInBytes" Text="{Binding Settings.FasterDirectoryMaxSizeInBytes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+		<Separator />
+
+		<TextBox IsReadOnly="True" Text="{Binding Settings.FolderSizeHint, Mode=OneWay}" TextWrapping="Wrap" />
+	</StackPanel>
+</UserControl>

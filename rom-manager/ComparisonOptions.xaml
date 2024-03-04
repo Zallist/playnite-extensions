@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="RomManager.ComparisonOptions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RomManager"
+             mc:Ignorable="d" d:Background="MidnightBlue"
+             Width="400" Height="Auto">
+
+    <StackPanel Margin="10">
+        <StackPanel>
+            <Label>Using Game List</Label>
+            <ComboBox ItemsSource="{Binding GameListSources}" SelectedValue="{Binding SelectedUsingSourceList}"
+                      DisplayMemberPath="Item2" SelectedValuePath="Item1" />
+        </StackPanel>
+        <StackPanel Margin="0,10,0,0">
+            <Label>Against Game List</Label>
+            <ComboBox ItemsSource="{Binding GameListSources}" SelectedValue="{Binding SelectedAgainstSourceList}"
+                      DisplayMemberPath="Item2" SelectedValuePath="Item1" />
+        </StackPanel>
+        <StackPanel Margin="0,10,0,0">
+            <Label>Using Comparison Field</Label>
+            <ComboBox ItemsSource="{Binding ComparisonFields}" SelectedValue="{Binding SelectedComparisonField}"
+                      DisplayMemberPath="Item2" SelectedValuePath="Item1" />
+        </StackPanel>
+
+        <Separator Margin="0,10" />
+        
+        <Button Content="Do Comparison" Command="{Binding DoComparisonCommand}" />
+    </StackPanel>
+</UserControl>
