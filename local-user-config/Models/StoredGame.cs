@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 
@@ -23,7 +18,9 @@ namespace LocalUserConfig.Models
         public ulong Playtime { get; set; }
         public int? UserScore { get; set; }
 
-        private StoredGame() { }
+        private StoredGame()
+        { }
+
         private StoredGame(in Game game) : this()
         {
             Id = game.Id;

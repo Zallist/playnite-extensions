@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MetadataHelper;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -27,7 +23,7 @@ namespace CopyToFasterDrive
             enabled = true;
 
             fasterDirectoryPath = System.IO.Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                 "Temp\\Playnite_Faster_Cache");
 
             // Set default size to 20GB
@@ -52,7 +48,6 @@ namespace CopyToFasterDrive
         }
     }
 
-
     public class CopyToFasterDriveSettingsViewModel : ObservableObject, ISettings
     {
         public static string SettingsFilePath = Path.Combine(
@@ -62,6 +57,7 @@ namespace CopyToFasterDrive
         private CopyToFasterDriveSettings editingClone { get; set; }
 
         private CopyToFasterDriveSettings settings;
+
         public CopyToFasterDriveSettings Settings
         {
             get => settings;

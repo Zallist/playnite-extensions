@@ -10,10 +10,10 @@
 			<Label FontWeight="Bold">Enabled</Label>
 		</CheckBox>
 
-		<Label Content="Faster Directory Path"/>
-		<TextBox Name="FasterDirectoryPath" Text="{Binding Settings.FasterDirectoryPath, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
-		
-		<Label Content="Max Directory Size In Bytes"/>
+		<Label Content="Faster Directory Path" />
+		<TextBox Name="FasterDirectoryPath" Text="{Binding Settings.FasterDirectoryPath, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+
+		<Label Content="Max Directory Size In Bytes" />
 		<TextBox Name="FasterDirectoryMaxSizeInBytes" Text="{Binding Settings.FasterDirectoryMaxSizeInBytes, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
 
 		<Separator />

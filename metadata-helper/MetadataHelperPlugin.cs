@@ -1,16 +1,8 @@
-﻿using Playnite.SDK;
-using Playnite.SDK.Events;
+﻿using System;
+using System.Collections.Generic;
+using Playnite.SDK;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using PlayniteUtilities;
 
 namespace MetadataHelper

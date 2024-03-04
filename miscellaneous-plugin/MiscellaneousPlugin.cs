@@ -1,19 +1,7 @@
-﻿using Playnite.SDK;
+﻿using System;
+using Playnite.SDK;
 using Playnite.SDK.Events;
-using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using PlayniteUtilities;
-using System.Windows.Media.Effects;
 
 namespace MiscellaneousPlugin
 {
@@ -40,7 +28,6 @@ namespace MiscellaneousPlugin
 
         private void EnsureOutlinesOnText()
         {
-
         }
     }
 }

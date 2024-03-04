@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LibraryExternalizer;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -16,7 +11,6 @@ namespace CopyToFasterDrive
     {
         public ExternalizerSettings()
         {
-
         }
     }
 
@@ -29,6 +23,7 @@ namespace CopyToFasterDrive
         private ExternalizerSettings editingClone { get; set; }
 
         private ExternalizerSettings settings;
+
         public ExternalizerSettings Settings
         {
             get => settings;

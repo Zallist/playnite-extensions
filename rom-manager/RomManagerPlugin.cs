@@ -1,18 +1,14 @@
-﻿using Playnite.SDK;
-using Playnite.SDK.Events;
-using Playnite.SDK.Models;
-using Playnite.SDK.Plugins;
-using PlayniteUtilities;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Playnite.SDK;
+using Playnite.SDK.Models;
+using Playnite.SDK.Plugins;
+using PlayniteUtilities;
 
 namespace RomManager
 {
@@ -121,7 +117,7 @@ namespace RomManager
                             continue;
 
                         gameToEmulatorProfile[game] = Tuple.Create(gameAction.EmulatorId, gameAction.EmulatorProfileId);
-                        
+
                         bool anyFound = false;
                         List<string> missingPaths = new List<string>();
 
@@ -246,12 +242,13 @@ namespace RomManager
             }, new GlobalProgressOptions("Deleting...", true) { IsIndeterminate = false });
         }
 
-        public void FindDuplicateRoms(GameListSource usingSourceList, GameListSource againstSourceList, 
+        public void FindDuplicateRoms(GameListSource usingSourceList, GameListSource againstSourceList,
             RomManage.Enums.ComparisonField comparisonField)
         {
-            // Loop through all games and figure out which ones are duplicates, rank them by similarity for each rom
-            // Account for differences that guarantee a different file ("Disc 1")
-            // Similarity is based on how close the file names are (minus any obvious ignorable chunks like region or revision or version)
+            // Loop through all games and figure out which ones are duplicates, rank them by
+            // similarity for each rom Account for differences that guarantee a different file
+            // ("Disc 1") Similarity is based on how close the file names are (minus any obvious
+            // ignorable chunks like region or revision or version)
 
             var usingList = PlayniteApiUtilities.GetGameList(usingSourceList).ToDictionary(g => g.Id);
             var againstList = PlayniteApiUtilities.GetGameList(againstSourceList).ToDictionary(g => g.Id);

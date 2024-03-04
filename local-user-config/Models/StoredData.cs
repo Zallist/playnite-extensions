@@ -15,6 +15,7 @@ namespace LocalUserConfig.Models
         private static IPlayniteAPI API => Playnite.SDK.API.Instance;
 
         private static StoredData _instance = null;
+
         public static StoredData Instance
         {
             get
@@ -143,7 +144,7 @@ namespace LocalUserConfig.Models
 
         public void ApplyStoredAppSettings()
         {
-            var filterPreset = API.Database.FilterPresets.Get(AppSettings.FilterPresetId) ?? 
+            var filterPreset = API.Database.FilterPresets.Get(AppSettings.FilterPresetId) ??
                 new FilterPreset();
 
             if (AppSettings.FilterSettings != null)

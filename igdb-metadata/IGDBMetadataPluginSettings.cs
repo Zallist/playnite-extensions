@@ -1,12 +1,9 @@
-﻿using Playnite.SDK;
-using Playnite.SDK.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using Playnite.SDK;
+using Playnite.SDK.Data;
 
 namespace IGDBMetadataPlugin
 {
@@ -14,6 +11,7 @@ namespace IGDBMetadataPlugin
     {
         [DontSerialize]
         private byte[] clientIdRaw = new byte[0];
+
         [DontSerialize]
         private byte[] clientSecretRaw = new byte[0];
 
@@ -99,7 +97,8 @@ namespace IGDBMetadataPlugin
 
         public IGDBMetadataPluginSettingsViewModel(IGDBMetadataPlugin plugin)
         {
-            // Injecting your plugin instance is required for Save/Load method because Playnite saves data to a location based on what plugin requested the operation.
+            // Injecting your plugin instance is required for Save/Load method because Playnite
+            // saves data to a location based on what plugin requested the operation.
             this.plugin = plugin;
 
             // Load saved settings.
@@ -124,8 +123,8 @@ namespace IGDBMetadataPlugin
 
         public void CancelEdit()
         {
-            // Code executed when user decides to cancel any changes made since BeginEdit was called.
-            // This method should revert any changes made to Option1 and Option2.
+            // Code executed when user decides to cancel any changes made since BeginEdit was
+            // called. This method should revert any changes made to Option1 and Option2.
             Settings = editingClone;
         }
 

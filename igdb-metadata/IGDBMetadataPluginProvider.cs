@@ -1,16 +1,15 @@
-﻿using IGDBMetadataPlugin.IGDB;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using IGDBMetadataPlugin.IGDB;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using PlayniteUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace IGDBMetadataPlugin
 {
@@ -346,6 +345,7 @@ rating;";
         }
 
         #region Auto-matching
+
         private IGDBGame GetBestMatch(List<IGDBGame> igdbGames, Game game)
         {
             if (igdbGames.Count == 1)
@@ -397,7 +397,7 @@ rating;";
             return igdbGames.First();
         }
 
-        static Dictionary<string, HashSet<IGDBGame>> GroupGames(List<IGDBGame> igdbGames, Func<IGDBGame, IEnumerable<string>> keySelector)
+        private static Dictionary<string, HashSet<IGDBGame>> GroupGames(List<IGDBGame> igdbGames, Func<IGDBGame, IEnumerable<string>> keySelector)
         {
             Dictionary<string, HashSet<IGDBGame>> grouped = new Dictionary<string, HashSet<IGDBGame>>(StringComparer.OrdinalIgnoreCase);
 
@@ -415,8 +415,7 @@ rating;";
             return grouped;
         }
 
-
-        static bool GetMatchingGame(ICollection<IGDBGame> igdbGames, Game game, out IGDBGame matched, bool fuzzy = true)
+        private static bool GetMatchingGame(ICollection<IGDBGame> igdbGames, Game game, out IGDBGame matched, bool fuzzy = true)
         {
             matched = null;
 
@@ -440,15 +439,15 @@ rating;";
             return false;
         }
 
-        static bool HasMatchingPlatform(IEnumerable<IGDBPlatform> platforms, Game game)
+        private static bool HasMatchingPlatform(IEnumerable<IGDBPlatform> platforms, Game game)
         {
             return platforms != null && platforms.Any(p => GetMatchingPlatform(p, game) != null);
         }
 
-        static Platform GetMatchingPlatform(IGDBPlatform platform, Game game)
+        private static Platform GetMatchingPlatform(IGDBPlatform platform, Game game)
             => GetMatchingPlatform(platform, game.Platforms);
 
-        static Platform GetMatchingPlatform(IGDBPlatform platform, IEnumerable<Platform> realPlatforms)
+        private static Platform GetMatchingPlatform(IGDBPlatform platform, IEnumerable<Platform> realPlatforms)
         {
             var platformNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -482,6 +481,7 @@ rating;";
         }
 
         private static readonly Dictionary<string, Regex> wordRegexCache = new Dictionary<string, Regex>(StringComparer.OrdinalIgnoreCase);
+
         private static Regex GetWordRegex(string word)
         {
             if (string.IsNullOrWhiteSpace(word))
@@ -492,7 +492,8 @@ rating;";
 
             return regex;
         }
-        #endregion
+
+        #endregion Auto-matching
 
         private List<MetadataField> availableFields = null;
 
@@ -684,7 +685,6 @@ rating;";
 
                 return new MetadataFile(selectedFileOption.Path);
             }
-
         }
 
         public override MetadataFile GetIcon(GetMetadataFieldArgs args)

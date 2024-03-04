@@ -4,25 +4,15 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Playnite.SDK;
 using PlayniteUtilities;
 
 namespace RomManager
 {
-    /// <summary>
-    /// Interaction logic for DuplicateRoms.xaml
-    /// </summary>
+    /// <summary>Interaction logic for DuplicateRoms.xaml</summary>
     public partial class DuplicateRoms : UserControl, INotifyPropertyChanged
     {
         public enum ComparisonCategoryType
@@ -98,7 +88,7 @@ namespace RomManager
             int deletedCount = 0;
 
             var confirm = API.Dialogs.ShowMessage($"Are you sure you want to delete {romCount} roms? \n" +
-                $"All the roms will be deleted from the Playnite database before the files themselves are deleted.", 
+                $"All the roms will be deleted from the Playnite database before the files themselves are deleted.",
                 "Confirm deletion", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
 
             if (confirm == MessageBoxResult.Yes)
@@ -273,10 +263,12 @@ namespace RomManager
                                         if (!otherRom.Game.PlatformIds.Intersect(rom.Game.PlatformIds).Any())
                                             continue;
                                         break;
+
                                     case ComparisonCategoryType.OnlyCompareSamePlatformCategory:
                                         if (!GetPlatformCategories(rom.Game.PlatformIds).Intersect(GetPlatformCategories(otherRom.Game.PlatformIds)).Any())
                                             continue;
                                         break;
+
                                     default:
                                         throw new NotImplementedException();
                                 }
@@ -299,7 +291,8 @@ namespace RomManager
                             {
                                 if (duplicate.Group != group)
                                 {
-                                    // We already exist in a group, so just move everything from {new group} to {existing group}
+                                    // We already exist in a group, so just move everything from
+                                    // {new group} to {existing group}
                                     for (int j = group.DuplicateRoms.Count - 1; j >= 0; j--)
                                     {
                                         DuplicateRom d = group.DuplicateRoms[j];
@@ -400,6 +393,7 @@ namespace RomManager
         }
 
         #region INotifyPropertyChanged
+
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -408,6 +402,7 @@ namespace RomManager
             property = value;
             OnPropertyChanged(propertyName);
         }
+
         #endregion INotifyPropertyChanged
 
         public class DuplicateRomGroup

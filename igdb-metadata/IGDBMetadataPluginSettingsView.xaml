@@ -10,11 +10,11 @@
             <Run>You can get IGDB Client ID &amp; secrets by following the documentation at</Run>
             <Hyperlink NavigateUri="https://api-docs.igdb.com/#authentication">https://api-docs.igdb.com/#authentication</Hyperlink>
         </TextBlock>
-        
-        <TextBlock Text="IGDB Client ID: "/>
-        <TextBox Text="{Binding Settings.ClientId}"/>
-        
-        <TextBlock Text="IGDB Client Secret: "/>
-        <TextBox Text="{Binding Settings.ClientSecret}"/>
+
+        <TextBlock Text="IGDB Client ID: " />
+        <TextBox Text="{Binding Settings.ClientId}" />
+
+        <TextBlock Text="IGDB Client Secret: " />
+        <TextBox Text="{Binding Settings.ClientSecret}" />
     </StackPanel>
 </UserControl>

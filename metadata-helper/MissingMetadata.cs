@@ -1,15 +1,11 @@
-using Playnite.SDK;
-using Playnite.SDK.Events;
-using Playnite.SDK.Models;
-using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+using Playnite.SDK;
+using Playnite.SDK.Models;
+using Playnite.SDK.Plugins;
 using PlayniteUtilities;
 
 namespace MetadataHelper
@@ -17,6 +13,7 @@ namespace MetadataHelper
     public class MissingMetadata : IDisposable
     {
         #region Enums
+
         [Flags]
         public enum Info : ushort
         {
@@ -38,9 +35,11 @@ namespace MetadataHelper
             Cover = 1 << 1,
             Background = 1 << 2
         }
-        #endregion
+
+        #endregion Enums
 
         #region Dictionary Mappings
+
         private static readonly Dictionary<Info, string> InfoToTag = new Dictionary<Info, string>()
         {
             { Info.AgeRating, "Missing Info: Age Rating" },
@@ -62,9 +61,10 @@ namespace MetadataHelper
 
         private static readonly Dictionary<string, Media> TagToMedia = new Dictionary<string, Media>(
             MediaToTag.ToDictionary(k => k.Value, k => k.Key), StringComparer.OrdinalIgnoreCase);
-        #endregion
 
-        const string MissingMenuSection = MetadataHelperPlugin.BaseMenuSection + "Missing Info";
+        #endregion Dictionary Mappings
+
+        private const string MissingMenuSection = MetadataHelperPlugin.BaseMenuSection + "Missing Info";
 
         public readonly IPlayniteAPI API;
 
@@ -122,6 +122,7 @@ namespace MetadataHelper
         }
 
         #region Missing Stuff
+
         private void AddTagsForMissingInfo(GameMenuItemActionArgs args, Info infos)
         {
             try
@@ -271,18 +272,22 @@ namespace MetadataHelper
                     if (game.PlatformIds != null && game.PlatformIds.Count > 0)
                         return true;
                     break;
+
                 case Info.AgeRating:
                     if (game.AgeRatingIds != null && game.AgeRatingIds.Count > 0)
                         return true;
                     break;
+
                 case Info.Genres:
                     if (game.GenreIds != null && game.GenreIds.Count > 0)
                         return true;
                     break;
+
                 case Info.Description:
                     if (!string.IsNullOrWhiteSpace(game.Description))
                         return true;
                     break;
+
                 case Info.ReleaseDate:
                     if (game.ReleaseDate.HasValue)
                         return true;
@@ -305,6 +310,7 @@ namespace MetadataHelper
                             return true;
                     }
                     break;
+
                 case Media.Cover:
                     if (!string.IsNullOrWhiteSpace(game.CoverImage))
                     {
@@ -314,6 +320,7 @@ namespace MetadataHelper
                             return true;
                     }
                     break;
+
                 case Media.Background:
                     if (!string.IsNullOrWhiteSpace(game.BackgroundImage))
                     {
@@ -327,7 +334,8 @@ namespace MetadataHelper
 
             return false;
         }
-        #endregion
+
+        #endregion Missing Stuff
 
         private void Games_ItemUpdated(object sender, ItemUpdatedEventArgs<Game> e)
         {
@@ -370,7 +378,6 @@ namespace MetadataHelper
                         }
                     }
                 }
-
 
                 if (gamesToUpdate.Count > 0)
                 {

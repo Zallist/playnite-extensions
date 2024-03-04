@@ -1,12 +1,12 @@
-﻿using Playnite.SDK;
-using Playnite.SDK.Models;
-using RomManage.Enums;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Playnite.SDK;
+using Playnite.SDK.Models;
 using PlayniteUtilities;
+using RomManage.Enums;
 
 namespace RomManager
 {
@@ -32,10 +32,13 @@ namespace RomManager
 
         private static readonly Regex BracketedChunk = new Regex(@"(?: \( ([^)]+) \) | \[ ([^]]+) \] | \{ ([^}]+) \} )",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex IsPunctuation = new Regex(@"\p{P}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex MultipleSpaces = new Regex(@"\s{2,}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex SuperfluousWords = new Regex(@"\b(?:and|the|an|a)\b",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
@@ -82,9 +85,11 @@ namespace RomManager
                     default:
                         comp.ComparisonText = Path.GetFileNameWithoutExtension(comp.ExpandedRomPath);
                         break;
+
                     case ComparisonField.GameName:
                         comp.ComparisonText = game.Name;
                         break;
+
                     case ComparisonField.RomFullPath:
                         comp.ComparisonText = comp.ExpandedRomPath;
                         break;
@@ -187,6 +192,7 @@ namespace RomManager
             }
         }
 
-        private ComparableRom() { }
+        private ComparableRom()
+        { }
     }
 }

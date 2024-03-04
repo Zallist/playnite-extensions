@@ -1,19 +1,10 @@
-﻿using LocalUserConfig.Models;
+﻿using System;
+using System.Collections.Generic;
+using LocalUserConfig.Models;
 using Playnite.SDK;
 using Playnite.SDK.Events;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using PlayniteUtilities;
 
 namespace LocalUserConfig
 {
@@ -48,11 +39,10 @@ namespace LocalUserConfig
 
             //using (API.Database.BufferedUpdate())
             {
-
                 foreach (var kvp in StoredData.Instance.Games)
                 {
                     var game = API.Database.Games.Get(kvp.Key);
-                    
+
                     if (game != null)
                     {
                         kvp.Value.UpdateRealGame(ref game);

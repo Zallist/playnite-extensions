@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
-using System.Windows.Input;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using Playnite.SDK.Models;
 
 namespace PlayniteUtilities
 {
-    public enum GameListSource { AllGames, FilteredGames, SelectedGames };
+    public enum GameListSource
+    {
+        AllGames,
+        FilteredGames,
+        SelectedGames
+    };
 
     public static class PlayniteApiUtilities
     {
@@ -19,10 +23,13 @@ namespace PlayniteUtilities
             {
                 case GameListSource.AllGames:
                     return API.Instance.Database.Games;
+
                 case GameListSource.FilteredGames:
                     return API.Instance.MainView.FilteredGames ?? new List<Game>();
+
                 case GameListSource.SelectedGames:
                     return API.Instance.MainView.SelectedGames ?? new List<Game>();
+
                 default:
                     throw new NotImplementedException();
             }
@@ -98,7 +105,6 @@ namespace PlayniteUtilities
             return false;
         }
 
-
         public static TSettings DeserializeFromFile<TSettings>(string path) where TSettings : class
         {
             if (File.Exists(path))
@@ -144,6 +150,7 @@ namespace PlayniteUtilities
         }
 
         private static System.Threading.Thread updateDatabaseItemQueueThread = null;
+
         private static readonly System.Collections.Concurrent.ConcurrentQueue<UpdateDatabaseItemActions> updateDatabaseItemQueue =
             new System.Collections.Concurrent.ConcurrentQueue<UpdateDatabaseItemActions>();
 
@@ -211,7 +218,6 @@ namespace PlayniteUtilities
 
             try
             {
-
                 updateDatabaseItemQueue.Enqueue(new UpdateDatabaseItemActions()
                 {
                     Action = () => db.Update(item),
@@ -238,7 +244,7 @@ namespace PlayniteUtilities
                     return false;
 
                 waitHandle.Reset();
-                
+
                 updateDatabaseItemQueue.Enqueue(new UpdateDatabaseItemActions()
                 {
                     Action = () =>

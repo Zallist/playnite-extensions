@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IGDBMetadataPlugin.IGDB;
-
-namespace IGDBMetadataPlugin.IGDB
+﻿namespace IGDBMetadataPlugin.IGDB
 {
     public class IGDBInvolvedCompany
     {

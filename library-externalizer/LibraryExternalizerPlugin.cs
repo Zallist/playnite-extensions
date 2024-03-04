@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CopyToFasterDrive;
 using Playnite.SDK;
 using Playnite.SDK.Plugins;
@@ -36,7 +33,6 @@ namespace LibraryExternalizer
                 Description = "Export gamelist.xml",
                 Action = (menuArgs) =>
                 {
-
                 }
             };
 
@@ -52,7 +48,6 @@ namespace LibraryExternalizer
                 Description = "Export all enabled",
                 Action = (menuArgs) =>
                 {
-
                 }
             };
 
@@ -62,7 +57,6 @@ namespace LibraryExternalizer
                 Description = "Import gamelist.xml",
                 Action = (menuArgs) =>
                 {
-
                 }
             };
         }

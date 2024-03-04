@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace PlayniteUtilities
@@ -22,8 +21,8 @@ namespace PlayniteUtilities
             public int OrderNumber;
 
             public PlatformInformation(
-                string[] names, 
-                DateTime releaseDate, 
+                string[] names,
+                DateTime releaseDate,
                 PlatformCategory category = PlatformCategory.Console)
             {
                 Names = names;
@@ -78,7 +77,7 @@ namespace PlayniteUtilities
                 new PlatformInformation(new string[] { "Sony Playstation 2", "PlayStation 2", "PS2" }, DateTime.Parse("2000-03-04")),
                 new PlatformInformation(new string[] { "Nintendo Gamecube", "Gamecube", "GC" }, DateTime.Parse("2001-09-14")),
                 new PlatformInformation(new string[] { "Microsoft Xbox" }, DateTime.Parse("2001-11-15")),
-                
+
                 new PlatformInformation(new string[] { "Sony PlayStation Vita", "PlayStation Vita", "PSV", "PS Vita" }, DateTime.Parse("2012-01-01"), PlatformCategory.ModernHandheld),
 
                 new PlatformInformation(new string[] { "Nintendo Wii" }, DateTime.Parse("2006-11-19")),

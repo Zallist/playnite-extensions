@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PlayniteUtilities
 {
@@ -43,6 +42,7 @@ namespace PlayniteUtilities
         }
 
         private static readonly char[] PathSeparators = new char[] { System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar };
+
         public static string GetLongestPathCommonPrefix(IEnumerable<string> paths)
         {
             var count = paths.Count();
@@ -91,36 +91,40 @@ namespace PlayniteUtilities
             return IdGenerator<T>.GetNextId(key);
         }
 
-
-        private static readonly System.Text.RegularExpressions.Regex HumanizeVariableRegexSplitter = 
+        private static readonly System.Text.RegularExpressions.Regex HumanizeVariableRegexSplitter =
             new System.Text.RegularExpressions.Regex(@"
 (?= \p{Lu}\p{Ll} )
 |
 (?<= \p{Ll} ) (?= \p{Lu} )
 |
-(?= \p{P} ) \p{P} (?<= \p{P} )", 
+(?= \p{P} ) \p{P} (?<= \p{P} )",
                 System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnorePatternWhitespace);
+
         public static string HumanizeVariable(string variable)
         {
             // This is a PascalCase and camelCase and snake_case and kebab-case
             return string.Join(" ", HumanizeVariableRegexSplitter.Split(variable).Select(x => x.Trim())).Trim();
         }
 
-
         private static readonly Regex BracketedChunk = new Regex(@"(?: \( ([^)]+) \) | \[ ([^]]+) \] | \{ ([^}]+) \} )",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex PunctuationToRemove = new Regex(@"\p{P}|\p{So}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex PunctuationToTranspose = new Regex(@"\p{S}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex MultipleSpaces = new Regex(@"\s{2,}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex SuperfluousWords = new Regex(@"\b(?:and|the|an|a|der|das|die)\b",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex NumbersToRomanNumerals = new Regex(@"\b\d{1,2}\b",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
 
-        static readonly IEnumerable<KeyValuePair<int, string>> RomanNumeralMap = new List<KeyValuePair<int, string>>
+        private static readonly IEnumerable<KeyValuePair<int, string>> RomanNumeralMap = new List<KeyValuePair<int, string>>
         {
             new KeyValuePair<int, string>(1000, "M"),
             new KeyValuePair<int, string>(900, "CM"),
@@ -208,42 +212,55 @@ namespace PlayniteUtilities
                         case Byte @byte:
                             @object = ++@byte;
                             break;
+
                         case Int16 @short:
                             @object = ++@short;
                             break;
+
                         case Int32 @int:
                             @object = ++@int;
                             break;
+
                         case Int64 @long:
                             @object = ++@long;
                             break;
+
                         case UInt16 @ushort:
                             @object = ++@ushort;
                             break;
+
                         case UInt32 @uint:
                             @object = ++@uint;
                             break;
+
                         case UInt64 @ulong:
                             @object = ++@ulong;
                             break;
+
                         case SByte @sbyte:
                             @object = ++@sbyte;
                             break;
+
                         case Single @float:
                             @object = ++@float;
                             break;
+
                         case Double @double:
                             @object = ++@double;
                             break;
+
                         case Decimal @decimal:
                             @object = ++@decimal;
                             break;
+
                         case Char @char:
                             @object = ++@char;
                             break;
+
                         case DateTime @date:
                             @object = @date.AddTicks(1);
                             break;
+
                         default:
                             throw new NotImplementedException();
                     }
@@ -258,11 +275,11 @@ namespace PlayniteUtilities
     {
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool CopyFileEx(string lpExistingFileName, string lpNewFileName,
+        private static extern bool CopyFileEx(string lpExistingFileName, string lpNewFileName,
            CopyProgressRoutine lpProgressRoutine, IntPtr lpData, ref Int32 pbCancel,
            CopyFileFlags dwCopyFlags);
 
-        delegate CopyProgressResult CopyProgressRoutine(
+        private delegate CopyProgressResult CopyProgressRoutine(
             long TotalFileSize,
             long TotalBytesTransferred,
             long StreamSize,
@@ -275,7 +292,7 @@ namespace PlayniteUtilities
 
         public delegate void ReportCopyProgress(long total, long transferred);
 
-        enum CopyProgressResult : uint
+        private enum CopyProgressResult : uint
         {
             PROGRESS_CONTINUE = 0,
             PROGRESS_CANCEL = 1,
@@ -283,7 +300,7 @@ namespace PlayniteUtilities
             PROGRESS_QUIET = 3
         }
 
-        enum CopyProgressCallbackReason : uint
+        private enum CopyProgressCallbackReason : uint
         {
             CALLBACK_CHUNK_FINISHED = 0x00000000,
             CALLBACK_STREAM_SWITCH = 0x00000001
@@ -293,38 +310,48 @@ namespace PlayniteUtilities
         public enum CopyFileFlags : uint
         {
             NONE = 0x00000000,
-            /// <summary>
-            /// The copy operation fails immediately if the target file already exists. 
-            /// </summary>
+
+            /// <summary>The copy operation fails immediately if the target file already exists.</summary>
             COPY_FILE_FAIL_IF_EXISTS = 0x00000001,
+
             /// <summary>
-            /// Progress of the copy is tracked in the target file in case the copy fails. 
-            /// The failed copy can be restarted at a later time by specifying the same values for lpExistingFileName and lpNewFileName as those used in the call that failed. 
-            /// This can significantly slow down the copy operation as the new file may be flushed multiple times during the copy operation. 
+            /// Progress of the copy is tracked in the target file in case the copy fails. The
+            /// failed copy can be restarted at a later time by specifying the same values for
+            /// lpExistingFileName and lpNewFileName as those used in the call that failed. This can
+            /// significantly slow down the copy operation as the new file may be flushed multiple
+            /// times during the copy operation.
             /// </summary>
             COPY_FILE_RESTARTABLE = 0x00000002,
-            /// <summary>
-            /// The file is copied and the original file is opened for write access. 
-            /// </summary>
+
+            /// <summary>The file is copied and the original file is opened for write access.</summary>
             COPY_FILE_OPEN_SOURCE_FOR_WRITE = 0x00000004,
+
             /// <summary>
-            /// An attempt to copy an encrypted file will succeed even if the destination copy cannot be encrypted. 
+            /// An attempt to copy an encrypted file will succeed even if the destination copy
+            /// cannot be encrypted.
             /// </summary>
             COPY_FILE_ALLOW_DECRYPTED_DESTINATION = 0x00000008,
+
             /// <summary>
-            /// If the source file is a symbolic link, the destination file is also a symbolic link pointing to the same file that the source symbolic link is pointing to. 
+            /// If the source file is a symbolic link, the destination file is also a symbolic link
+            /// pointing to the same file that the source symbolic link is pointing to.
             /// </summary>
             COPY_FILE_COPY_SYMLINK = 0x00000800,
+
             /// <summary>
-            /// The copy operation is performed using unbuffered I/O, bypassing system I/O cache resources. Recommended for very large file transfers. 
+            /// The copy operation is performed using unbuffered I/O, bypassing system I/O cache
+            /// resources. Recommended for very large file transfers.
             /// </summary>
             COPY_FILE_NO_BUFFERING = 0x00001000,
+
             /// <summary>
-            /// Request the underlying transfer channel compress the data during the copy operation. 
-            /// The request may not be supported for all mediums, in which case it is ignored. 
-            /// The compression attributes and parameters (computational complexity, memory usage) are not configurable through this API, and are subject to change between different OS releases.
-            /// <br />This flag was introduced in Windows 10, version 1903 and Windows Server 2022. 
-            /// On Windows 10, the flag is supported for files residing on SMB shares, where the negotiated SMB protocol version is SMB v3.1.1 or greater.
+            /// Request the underlying transfer channel compress the data during the copy operation.
+            /// The request may not be supported for all mediums, in which case it is ignored. The
+            /// compression attributes and parameters (computational complexity, memory usage) are
+            /// not configurable through this API, and are subject to change between different OS
+            /// releases. <br /> This flag was introduced in Windows 10, version 1903 and Windows
+            /// Server 2022. On Windows 10, the flag is supported for files residing on SMB shares,
+            /// where the negotiated SMB protocol version is SMB v3.1.1 or greater.
             /// </summary>
             COPY_FILE_REQUEST_COMPRESSED_TRAFFIC = 0x10000000
         }

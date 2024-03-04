@@ -1,18 +1,14 @@
-﻿using Playnite.SDK;
-using Playnite.SDK.Events;
-using Playnite.SDK.Models;
-using Playnite.SDK.Plugins;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
+using Playnite.SDK;
+using Playnite.SDK.Events;
+using Playnite.SDK.Models;
+using Playnite.SDK.Plugins;
 using PlayniteUtilities;
 
 namespace KidMode
@@ -137,6 +133,7 @@ namespace KidMode
             => EnsureKidModeTags();
 
         #region Ensure KidMode Enforced
+
         private void Games_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<Game> e)
         {
             if (!IsKidModeEnabled)
@@ -257,7 +254,6 @@ namespace KidMode
                 if (AllowedWindowTypes.Contains(windowType.FullName))
                     continue;
 
-
                 if (!window.IsInitialized || !window.IsLoaded)
                     continue;
 
@@ -295,11 +291,12 @@ namespace KidMode
             "Playnite.FullscreenApp.Windows.ProgressWindow",
             "Playnite.FullscreenApp.Windows.RandomGameSelectWindow",
             "Playnite.FullscreenApp.Windows.CrashWindow",
-
         };
-        #endregion
+
+        #endregion Ensure KidMode Enforced
 
         #region Kid Mode Enable / Disable stuff
+
         private static readonly string _kidModeFilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "playnite-kidmode");
@@ -371,9 +368,11 @@ namespace KidMode
                 API.Dialogs.ShowMessage("Incorrect passcode entered");
             }
         }
-        #endregion
+
+        #endregion Kid Mode Enable / Disable stuff
 
         #region Tagging
+
         public void ToggleGameKidModeFriendly(bool setIsKidModeFriendly, IReadOnlyCollection<Game> games)
         {
             if (IsKidModeEnabled)
@@ -431,9 +430,11 @@ namespace KidMode
             if (!API.TryGetTagId(Tag_KidModeAny, out Tag_KidModeAnyId))
                 Tag_KidModeAnyId = API.Database.Tags.Add(Tag_KidModeAny).Id;
         }
-        #endregion
+
+        #endregion Tagging
 
         #region Config
+
         private Dictionary<Guid, string> GameToKidMode = new Dictionary<Guid, string>();
 
         private void ReadConfig()
@@ -469,7 +470,7 @@ namespace KidMode
                 }
             }
         }
-        #endregion
 
+        #endregion Config
     }
 }
