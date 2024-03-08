@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Playnite.SDK;
 using Playnite.SDK.Models;
@@ -8,9 +9,12 @@ namespace LocalUserConfig.Models
 {
     public class StoredData
     {
-        private static readonly string UserConfigPath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "PlayniteLocalUserConfig\\stored_data.dat");
+        private static string UserNameFilePath =
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "PlayniteData\\LocalUserConfig\\local-user-config.username");
+
+        private static string UserConfigPath = null;
 
         private static IPlayniteAPI API => Playnite.SDK.API.Instance;
 
@@ -29,19 +33,45 @@ namespace LocalUserConfig.Models
         {
         }
 
-        private int version = 1;
-        public int Version => version;
+        public int Version { get; set; } = 1;
 
         public StoredAppSettings AppSettings { get; set; } = new StoredAppSettings();
 
         public Dictionary<Guid, StoredGame> Games { get; set; } = new Dictionary<Guid, StoredGame>();
 
-        public List<FilterPreset> SavedFilterPresets { get; set; } = new List<FilterPreset>();
+        public FilterPreset LastFilterPreset { get; set; }
+
+        public Dictionary<Guid,FilterPreset> SavedFilterPresets { get; set; } = new Dictionary<Guid,FilterPreset>();
 
         public static void EnsureInstance()
         {
             if (_instance != null)
                 return;
+
+            if (UserConfigPath == null)
+            {
+                string userName = null;
+
+                if (File.Exists(UserNameFilePath))
+                    userName = File.ReadAllText(UserNameFilePath);
+
+                if (string.IsNullOrWhiteSpace(userName))
+                    userName = Environment.UserName;
+
+                UserConfigPath = Path.Combine(
+                    API.Paths.ExtensionsDataPath,
+                    "LocalUserConfig",
+                    userName,
+                    "config.json");
+
+                if (!File.Exists(UserNameFilePath))
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(UserNameFilePath)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(UserNameFilePath));
+
+                    File.WriteAllText(UserNameFilePath, userName);
+                }
+            }
 
             try
             {
@@ -128,11 +158,23 @@ namespace LocalUserConfig.Models
 
         public void UpdateAppSettings(bool save = true)
         {
-            AppSettings.FilterPresetId = API.MainView.GetActiveFilterPreset();
-            AppSettings.FilterSettings = API.MainView.GetCurrentFilterSettings();
-            AppSettings.Grouping = API.MainView.Grouping;
-            AppSettings.SortOrder = API.MainView.SortOrder;
-            AppSettings.SortOrderDirection = API.MainView.SortOrderDirection;
+            this.LastFilterPreset = new FilterPreset()
+            {
+                Id = API.MainView.GetActiveFilterPreset(),
+                Settings = API.MainView.GetCurrentFilterSettings(),
+                GroupingOrder = API.MainView.Grouping,
+                SortingOrder = API.MainView.SortOrder,
+                SortingOrderDirection = API.MainView.SortOrderDirection
+            };
+
+            var actualFilterPreset = API.Database.FilterPresets.Get(this.LastFilterPreset.Id);
+
+            if (actualFilterPreset != null)
+            {
+                this.LastFilterPreset.Name = actualFilterPreset.Name;
+                this.LastFilterPreset.ShowInFullscreeQuickSelection = actualFilterPreset.ShowInFullscreeQuickSelection;
+            }
+
             AppSettings.ActiveDesktopView = API.MainView.ActiveDesktopView;
             AppSettings.ActiveFullscreenView = API.MainView.ActiveFullscreenView;
 
@@ -142,25 +184,52 @@ namespace LocalUserConfig.Models
                 Save();
         }
 
-        public void ApplyStoredAppSettings()
+        public void ApplySettingsOnStartup()
         {
-            var filterPreset = API.Database.FilterPresets.Get(AppSettings.FilterPresetId) ??
-                new FilterPreset();
-
-            if (AppSettings.FilterSettings != null)
+            if (SavedFilterPresets?.Any() == true)
             {
-                filterPreset.GroupingOrder = AppSettings.Grouping;
-                filterPreset.SortingOrder = AppSettings.SortOrder;
-                filterPreset.SortingOrderDirection = AppSettings.SortOrderDirection;
-                filterPreset.Settings = AppSettings.FilterSettings;
+                using (API.Database.BufferedUpdate())
+                {
+                    foreach (var savedFilterPresetKVP in SavedFilterPresets)
+                    {
+                        var savedFilterPreset = savedFilterPresetKVP.Value;
+                        var existingFilterPreset = API.Database.FilterPresets.Get(savedFilterPresetKVP.Key);
 
-                API.MainView.ApplyFilterPreset(filterPreset);
+                        if (existingFilterPreset != null)
+                        {
+                            savedFilterPreset.CopyDiffTo(existingFilterPreset);
+                        }
+                        else
+                        {
+                            API.Database.FilterPresets.Add(savedFilterPreset);
+                        }
+                    }
+                }
             }
+
+            if (LastFilterPreset != null)
+                API.MainView.ApplyFilterPreset(LastFilterPreset);
 
             if (AppSettings.SelectedGameId.HasValue)
                 API.MainView.SelectGame(AppSettings.SelectedGameId.Value);
 
             API.MainView.ActiveDesktopView = AppSettings.ActiveDesktopView;
+        }
+
+        public void UpsertFilterPreset(FilterPreset filterPreset)
+        {
+            if (SavedFilterPresets.TryGetValue(filterPreset.Id, out var savedFilterPreset))
+                filterPreset.CopyDiffTo(savedFilterPreset);
+            else
+                SavedFilterPresets[filterPreset.Id] = filterPreset;
+
+            Save();
+        }
+
+        public void DeleteFilterPreset(Guid id)
+        {
+            if (SavedFilterPresets.Remove(id))
+                Save();
         }
     }
 }

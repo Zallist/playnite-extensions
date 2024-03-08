@@ -26,14 +26,12 @@ namespace LocalUserConfig
             {
                 HasSettings = false
             };
-
-            API.Database.Games.ItemUpdated += Games_ItemUpdated;
         }
 
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
         {
             StoredData.EnsureInstance();
-            StoredData.Instance.ApplyStoredAppSettings();
+            StoredData.Instance.ApplySettingsOnStartup();
 
             List<Guid> missingGuids = new List<Guid>();
 
@@ -59,6 +57,40 @@ namespace LocalUserConfig
                 missingGuids.ForEach(x => StoredData.Instance.Games.Remove(x));
 
             started = true;
+            API.Database.Games.ItemUpdated += Games_ItemUpdated;
+
+            API.Database.FilterPresets.ItemUpdated += FilterPresets_ItemUpdated;
+            API.Database.FilterPresets.ItemCollectionChanged += FilterPresets_ItemCollectionChanged;
+        }
+
+        private void FilterPresets_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<FilterPreset> e)
+        {
+            foreach (var remove in e.RemovedItems)
+            {
+                StoredData.Instance.DeleteFilterPreset(remove.Id);
+            }
+
+            foreach (var add in e.AddedItems)
+            {
+                StoredData.Instance.UpsertFilterPreset(add);
+            }
+        }
+
+        private void FilterPresets_ItemUpdated(object sender, ItemUpdatedEventArgs<FilterPreset> e)
+        {
+            foreach (var update in e.UpdatedItems)
+            {
+                if (update.NewData == null)
+                {
+                    if (update.OldData != null)
+                        StoredData.Instance.DeleteFilterPreset(update.OldData.Id);
+                }
+                else
+                {
+                    if (update.NewData != null)
+                        StoredData.Instance.UpsertFilterPreset(update.NewData);
+                }
+            }
         }
 
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args)

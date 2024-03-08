@@ -45,9 +45,10 @@ namespace KidMode
                 HasSettings = false
             };
 
-            API.Database.Tags.ItemCollectionChanged += Tags_ItemCollectionChanged;
             API.Database.Tags.ItemUpdated += Tags_ItemUpdated;
+            API.Database.Tags.ItemCollectionChanged += Tags_ItemCollectionChanged;
 
+            API.Database.Games.ItemUpdated += Games_ItemUpdated;
             API.Database.Games.ItemCollectionChanged += Games_ItemCollectionChanged;
 
             var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
@@ -134,16 +135,83 @@ namespace KidMode
 
         #region Ensure KidMode Enforced
 
+        private bool fixing = false;
+
+        private static readonly HashSet<GameField> AllowedGameChanges = new HashSet<GameField>()
+        {
+            GameField.CompletionStatusId, GameField.CompletionStatus, 
+            GameField.LastActivity, GameField.LastActivitySegment, 
+            GameField.RecentActivity,
+            GameField.Hidden, 
+            GameField.Favorite,
+            GameField.Notes, 
+            GameField.PlayCount,
+            GameField.Playtime, GameField.PlaytimeCategory,
+            GameField.UserScore, GameField.UserScoreGroup, GameField.UserScoreRating,
+            GameField.IsInstalling, GameField.IsLaunching, GameField.IsRunning, GameField.IsUninstalling, GameField.IsInstalled,
+            GameField.Modified, GameField.ModifiedSegment,
+            GameField.None
+        };
+
+        private void Games_ItemUpdated(object sender, ItemUpdatedEventArgs<Game> e)
+        {
+            if (!IsKidModeEnabled)
+                return;
+
+            if (fixing)
+                return;
+
+            try
+            {
+                fixing = true;
+
+                using (API.Database.BufferedUpdate())
+                {
+                    foreach (var update in e.UpdatedItems)
+                    {
+                        if (update.NewData == null || update.OldData == null)
+                            return;
+
+                        var differences = update.NewData.GetDifferences(update.OldData);
+
+                        if (!AllowedGameChanges.IsSupersetOf(differences))
+                        {
+                            // You made changes you're not allowed to make
+                            var game = API.Database.Games.Get(update.NewData.Id);
+                            update.OldData.CopyDiffTo(game);
+                            API.Database.Games.Update(game);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                fixing = false;
+            }
+        }
+
         private void Games_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<Game> e)
         {
             if (!IsKidModeEnabled)
                 return;
 
-            if (e.RemovedItems.Count > 0)
-            {
-                API.Database.Games.Add(e.RemovedItems);
+            if (fixing)
+                return;
 
-                API.Dialogs.ShowMessage("Kid mode is enabled, games cannot be deleted", "Game deletion not allowed", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            try
+            {
+                fixing = true;
+
+                if (e.RemovedItems.Count > 0)
+                {
+                    API.Database.Games.Add(e.RemovedItems);
+
+                    API.Dialogs.ShowMessage("Kid mode is enabled, games cannot be deleted", "Game deletion not allowed", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+            }
+            finally
+            {
+                fixing = false;
             }
         }
 
