@@ -1,0 +1,1 @@
+powershell.exe -ExecutionPolicy Bypass .\.deploy-local.ps1 "T:\games\emulators\Playnite\Extensions"

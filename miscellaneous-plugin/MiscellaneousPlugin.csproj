@@ -51,7 +51,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Utilities\**\*.cs" />
+	  <Compile Include="..\Utilities\**\*.cs">
+      <Link>Utilities\%(Filename)%(Extension)</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MiscellaneousPlugin.cs" />
@@ -70,13 +72,4 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>robocopy "$(TargetDir) " "%25LOCALAPPDATA%25\Playnite\Extensions\$(ProjectName)" /E /J /PURGE /MT /NJH /NJS /NP /NS /NC /R:0
-if %25errorlevel%25 geq 8 exit %25errorlevel%25
-robocopy "$(TargetDir) " "$(SolutionDir)\bin\$(ProjectName)" /E /J /PURGE /MT /NJH /NJS /NP /NS /NC /R:0
-if %25errorlevel%25 geq 8 exit %25errorlevel%25
-
-
-exit 0</PostBuildEvent>
-  </PropertyGroup>
 </Project>

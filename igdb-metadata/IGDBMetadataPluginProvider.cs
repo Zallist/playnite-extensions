@@ -449,6 +449,9 @@ rating;";
 
         private static Platform GetMatchingPlatform(IGDBPlatform platform, IEnumerable<Platform> realPlatforms)
         {
+            if (realPlatforms?.Any() != true || platform == null)
+                return null;
+
             var platformNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 platform.name,
